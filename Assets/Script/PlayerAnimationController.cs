@@ -27,7 +27,7 @@ public class PlayerAnimationControler : MonoBehaviour
 
     private void OnMove()
     {
-        animator.SetFloat("VelX", 0f);
+        //animator.SetFloat("VelX", 0f);
         Vector3 localMoveDirection = transform.InverseTransformDirection(playerMovementController.DeltaPos);
         animator.SetFloat(velXHash, localMoveDirection.x * playerMovementController.MoveSpeed * 10f);
         animator.SetFloat(velYHash, localMoveDirection.z * playerMovementController.MoveSpeed * 10f);
