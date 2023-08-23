@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -34,21 +35,24 @@ namespace BasicCode
         private Ray ScreenPointToRay;
         public ForceMode forceMode = ForceMode.Force;
         CapsuleCollider capsuleCollider;
-        // Start is called before the first frame update
+
+        // 開始時執行的方法
         void Start()
         {
-            capsuleCollider = GetComponent<CapsuleCollider>(); 
+            capsuleCollider = GetComponent<CapsuleCollider>();
             rb = GetComponent<Rigidbody>();
             cam = Camera.main;
         }
 
         private void FixedUpdate()
         {
+            // 若有位移，則在FixedUpdate中更新物體位置
             if (deltaPos.magnitude != 0) rb.MovePosition(transform.position + deltaPos);
+            // 若有旋轉，則在FixedUpdate中更新物體旋轉
             if (deltaRot.eulerAngles.magnitude != 0) rb.MoveRotation(deltaRot);
         }
 
-        // Update is called once per frame
+        // 每幀執行的方法
         void Update()
         {
             OnMove();
@@ -56,6 +60,8 @@ namespace BasicCode
             OnJump();
             OnFire();
         }
+
+        // 角色移動的方法
         private void OnMove()
         {
             deltaVertical = Input.GetAxis("Vertical");
@@ -65,6 +71,8 @@ namespace BasicCode
             Quaternion noTiltRotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
             deltaPos = noTiltRotation * movement * MoveSpeed * Time.deltaTime;
         }
+
+        // 角色旋轉的方法
         private void OnRotation()
         {
             Ray camerRay = cam.ScreenPointToRay(Input.mousePosition);
@@ -81,50 +89,44 @@ namespace BasicCode
                 deltaRot = Quaternion.Slerp(transform.rotation, targetRot, RotationSpeed * Time.deltaTime);
             }
         }
+
+        // 繪製Gizmos以可視化射線
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
-            //Gizmos.DrawRay(ScreenPointToRay.origin, ScreenPointToRay.direction * 100f);
+            // Gizmos.DrawRay(ScreenPointToRay.origin, ScreenPointToRay.direction * 100f);
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(transform.position, transform.position+(Vector3.down*groundCheckDistance));
-            //Gizmos.DrawSphere(GetPoint, .5f);
+            // 在Scene視圖中繪製一條藍色的線，表示從物體位置向下延伸的射線，用於檢查地面
+            Gizmos.DrawLine(transform.position, transform.position + (Vector3.down * groundCheckDistance));
+            // Gizmos.DrawSphere(GetPoint, .5f);
         }
-        
+
+        // 角色跳躍的方法
         private void OnJump()
         {
-            //print(IsGrounded());
+            // 若按下跳躍按鈕且在地面上，則給予向上的力量實現跳躍
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
                 rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             }
         }
 
+        // 檢測角色是否在地面上的方法
         public bool IsGrounded()
         {
             RaycastHit hit;
-            //if (Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance))
+            // 若在地面上有碰撞，則返回true
             if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, capsuleCollider.bounds.extents.y + groundCheckDistance))
             {
                 return true;
             }
             else { return false; }
         }
-        /*float Raycast()
-        {
-            float number = 1;
-            return number;
-        }
 
-        bool Raycast(out float rayLength)
-        {
-            float number = 1;
-            rayLength = number;
-            return false;
-        }*/
+        // 角色開火的方法
         private void OnFire()
         {
-
+            // 留空，以實現開火功能
         }
     }
-
 }
