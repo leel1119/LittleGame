@@ -35,12 +35,10 @@ public class Player_DamageColliderFunction : MonoBehaviour
     }
     private void OnStartAttackAnimation(object sender, EventArgs e)
     {
-        print("Start");
         col.enabled = true;
     }
     private void OnEndAttatckAnimation(object sender, EventArgs e)
     {
-        print("End");
         col.enabled=false;
     }
 
