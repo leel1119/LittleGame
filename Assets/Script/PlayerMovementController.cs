@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Properties;
 
 namespace BasicCode
 {
@@ -36,6 +37,31 @@ namespace BasicCode
         public ForceMode forceMode = ForceMode.Force;
         CapsuleCollider capsuleCollider;
 
+        private Vector2 deltaInput;
+        public Vector2 DeltaInput => deltaInput;
+
+        [Header("攻擊1參數")]
+        [SerializeField] private float Fire1Interval = 0.1f;
+        [SerializeField] private float Fire1Damage = 1.0f;
+        [SerializeField] private float Fire1Force = 1.0f;
+        private float fire1Cooldown;
+
+        private EventHandler<FireEventArgs> fire1Received, fire2Received;
+
+        public event EventHandler<FireEventArgs> Fire1Received
+        {
+            add { fire1Received += value; } 
+            remove {  fire1Received -= value; }
+        }
+
+
+        private EventHandler jumpReceived;
+        public event EventHandler JumpReceived
+        {
+            add { jumpReceived += value; }
+            remove { jumpReceived -= value; }
+        }
+
         // 開始時執行的方法
         void Start()
         {
@@ -64,8 +90,8 @@ namespace BasicCode
         // 角色移動的方法
         private void OnMove()
         {
-            deltaVertical = Input.GetAxis("Vertical");
-            deltaHorizontal = Input.GetAxis("Horizontal");
+            deltaVertical = deltaInput.y = Input.GetAxis("Vertical");
+            deltaHorizontal = deltaInput.x = Input.GetAxis("Horizontal");
 
             Vector3 movement = new Vector3(deltaHorizontal, 0f, deltaVertical);
             Quaternion noTiltRotation = Quaternion.Euler(0, cam.transform.eulerAngles.y, 0);
@@ -107,8 +133,17 @@ namespace BasicCode
             // 若按下跳躍按鈕且在地面上，則給予向上的力量實現跳躍
             if (Input.GetButtonDown("Jump") && IsGrounded())
             {
+                jumpReceived?.Invoke(this, EventArgs.Empty);
+                //if (jumpReceived != null)
+                //{ 
+                //    jumpReceived.Invoke(this, EventArgs.Empty);
+                //}
                 rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
             }
+        }
+        private void OnDestroy()
+        {
+            jumpReceived = null;
         }
 
         // 檢測角色是否在地面上的方法
@@ -124,9 +159,27 @@ namespace BasicCode
         }
 
         // 角色開火的方法
-        private void OnFire()
+        public void OnFire()
         {
-            // 留空，以實現開火功能
+            if (Input.GetButtonDown("Fire1") && fire1Cooldown <= 0f)
+            {
+                FireEventArgs fireEventArgs = new FireEventArgs(Fire1Damage, Fire1Force);
+                fire1Received?.Invoke(this, fireEventArgs);
+                fire1Cooldown = Fire1Interval;
+            }
+
+            if (fire1Cooldown > 0f) { fire1Cooldown -= Time.deltaTime; }
         }
     }
 }
+//public class FireEventArgs : EventArgs
+//{
+//    public float FireDamage { get; private set; }
+//    public float FireForce { get; private set; }
+
+//    public FireEventArgs(float damageDate, float forceData)
+//    {
+//        FireDamage = damageDate;
+//        FireForce = forceData;
+//    }
+//}
