@@ -40,8 +40,10 @@ public class Enemy_DamageColliderFunction : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        
         if (!other.isTrigger)
         {
+            Debug.Log("Trigger entered!");
             Rigidbody rb = other.attachedRigidbody;
             if (rb)
             { 
@@ -63,9 +65,5 @@ public class Enemy_DamageColliderFunction : MonoBehaviour
                 }
             }
         }
-    }
-    void Update()
-    {
-        
     }
 }

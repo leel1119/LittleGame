@@ -9,12 +9,13 @@ public class Player_DamageColliderFunction : MonoBehaviour
     private PlayerMovementController playerMovementController;
     private PlayerAnimationController playerAnimationController;
     private FireEventArgs fireEventArgs;
-    private Collider col;
+    private Collider Collider;
+    private SphereCollider sphereCollider;
     private GameObject owner;
     void Start()
     {
-        col = GetComponent<Collider>();
-        col.enabled = false;
+        Collider = GetComponent<Collider>();
+        Collider.enabled = false;
 
         playerMovementController = GetComponentInParent<PlayerMovementController>();
         playerMovementController.Fire1Received += OnFire;
@@ -31,20 +32,21 @@ public class Player_DamageColliderFunction : MonoBehaviour
     }
     private void OnStartAttackAnimation(object sender, EventArgs e)
     {
-        col.enabled = true;
+        Collider.enabled = true;
     }
     private void OnEndAttatckAnimation(object sender, EventArgs e)
     {
-        col.enabled=false;
+        Collider.enabled=false;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.isTrigger)
+        if (other.isTrigger)
         {
+            Debug.Log("Trigger entered!");
             Rigidbody rb = other.attachedRigidbody;
             if (rb)
-            { 
+            {
                 Vector3 contactPoint = other.ClosestPointOnBounds(transform.position);
                 Vector3 direction = Vector3.Normalize(other.gameObject.transform.position - owner.transform.position);
                 //Vector3 direction = Vector3.one;
@@ -61,6 +63,7 @@ public class Player_DamageColliderFunction : MonoBehaviour
                         enemyHealth.OnDamage(TotalDamage);
                     }
                 }
+
             }
         }
     }

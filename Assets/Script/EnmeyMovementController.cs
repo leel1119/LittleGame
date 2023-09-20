@@ -33,12 +33,18 @@ namespace BasicCode
         private NavMeshAgent agent;
         private GameObject target;
 
+        private Rigidbody rb;
+        SphereCollider sphereCollider;
+
         // 開始時執行的方法
         void Start()
         {
             originPos = transform.position;
             enemyHealth = GetComponent<EnemyHealth>();
             enemyHealth.DeadReceived += OnDead;
+
+            rb = GetComponent<Rigidbody>();
+            sphereCollider = GetComponent<SphereCollider>();
 
             agent = GetComponent<NavMeshAgent>();
             agent.speed = moveSpeed;
