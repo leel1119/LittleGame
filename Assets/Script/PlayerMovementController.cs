@@ -1,11 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.VisualScripting;
-using UnityEngine;
-using Unity.Properties;
 
 namespace BasicCode
 {
@@ -164,7 +158,7 @@ namespace BasicCode
         // 檢測角色是否在地面上的方法
         public bool IsGrounded()
         {
-            RaycastHit hit;
+            //RaycastHit hit;
             // 若在地面上有碰撞，則返回true
             if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, capsuleCollider.bounds.extents.y + groundCheckDistance))
             {

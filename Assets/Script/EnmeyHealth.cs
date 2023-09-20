@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BasicCode
 {
     
-    public class PlayerHealth : MonoBehaviour
+    public class EnemyHealth : MonoBehaviour
     {
         [SerializeField] private GameObject ref_FX;
         [SerializeField] private float maxHP = 10f;
-        
+
+        public int Score = 1;
         public float MaxHP => maxHP;
         public float hp;
 
@@ -34,12 +36,12 @@ namespace BasicCode
             remove { hitReceived -= value; }
         }
 
-        private EventHandler revivalReceived;
-        public event EventHandler RevivalReceived
-        {
-            add { revivalReceived += value; }
-            remove { revivalReceived -= value; }
-        }
+        //private EventHandler revivalReceived;
+        //public event EventHandler RevivalReceived
+        //{
+        //    add { revivalReceived += value; }
+        //    remove { revivalReceived -= value; }
+        //}
 
         void Start()
         {
@@ -82,20 +84,20 @@ namespace BasicCode
             if (ref_FX)
             {
                 GameObject temFx = Instantiate(ref_FX, transform.position, Quaternion.identity);
-                temFx.AddComponent<ParticleEffectController>();
+                //temFx.AddComponent<ParticleEffectController>();
             }
             else 
             {
                 Debug.LogWarning("tempFX is Null, Check it");
             }
-            OnRevival();
+            //OnRevival();
         }
-        public void OnRevival()
-        { 
-            isDead = false;
-            enabled = true;
-            revivalReceived?.Invoke(this, EventArgs.Empty);
-            hp = MaxHP;
-        }
+        //public void OnRevival()
+        //{ 
+        //    isDead = false;
+        //    enabled = true;
+        //    revivalReceived?.Invoke(this, EventArgs.Empty);
+        //    hp = MaxHP;
+        //}
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace BasicCode
@@ -16,6 +13,7 @@ namespace BasicCode
 
         private Camera mainCamera;
         private PlayerHealth playerHealth;
+        private EnemyHealth enemyHealth;
 
         private RectTransform rectTransform;
         private CapsuleCollider capsuleCollider;
@@ -26,6 +24,7 @@ namespace BasicCode
         {
             rectTransform = GetComponent<RectTransform>();
             playerHealth = GetComponentInParent<PlayerHealth>();
+            enemyHealth = GetComponentInParent<EnemyHealth>();
             mainCamera = Camera.main;
 
             capsuleCollider = GetComponentInParent<CapsuleCollider>();
@@ -43,8 +42,9 @@ namespace BasicCode
         {
             float percent = 0;
             if(playerHealth) percent = playerHealth.hp / playerHealth.MaxHP;
-            print(playerHealth.hp);
-            print(playerHealth.MaxHP);
+            if (enemyHealth) percent = enemyHealth.CurrentHP / enemyHealth.MaxHP;
+            //print(playerHealth.hp);
+            //print(playerHealth.MaxHP);
             image_HP.fillAmount = Mathf.Lerp(image_HP.fillAmount, percent, lerp * Time.deltaTime);
 
             if (percent >= 0.5f)
