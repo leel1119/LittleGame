@@ -16,6 +16,9 @@ namespace BasicCode
         private int attack1Index = 0, attack1MaxIndex = 2;
         private int attack1Hash, attack1IndexHash;
         private EventHandler startAnimReceived, endAnimReceived;
+        private int hitTriggetHash, deadTriggerHash, revivalTriggerHash;
+        private PlayerHealth playerHealth;
+
         public event EventHandler StartAnimReceived 
         {
             add { startAnimReceived += value; }
@@ -51,8 +54,20 @@ namespace BasicCode
             animator = GetComponent<Animator>();
             velXHash = Animator.StringToHash("VelX");
             velYHash = Animator.StringToHash("VelY"); ;
+
+            playerHealth = GetComponentInParent<PlayerHealth>();
+            playerHealth.HitReceived += OnHit;
+            playerHealth.DeadReceived += OnDead;
+            playerHealth.RevivalReceived += OnRevival;
+
+            hitTriggetHash = Animator.StringToHash("HitTrigger");
+            deadTriggerHash = Animator.StringToHash("DeadTrigger");
+            revivalTriggerHash = Animator.StringToHash("RevivalTrigger");
         }
 
+        private void OnHit(object sender, EventArgs e) { animator.SetTrigger(hitTriggetHash); }
+        private void OnDead(object sender, EventArgs e) { animator.SetTrigger(deadTriggerHash); }
+        private void OnRevival(object sender, EventArgs e) { animator.SetTrigger(revivalTriggerHash); }
         public void OnFire1(object sender, FireEventArgs e)
         {
             attack1Index++;

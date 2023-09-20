@@ -47,6 +47,7 @@ namespace BasicCode
         private float fire1Cooldown;
 
         private EventHandler<FireEventArgs> fire1Received, fire2Received;
+        private PlayerHealth playerHealth;
 
         public event EventHandler<FireEventArgs> Fire1Received
         {
@@ -65,11 +66,25 @@ namespace BasicCode
         // 開始時執行的方法
         void Start()
         {
+            playerHealth = GetComponent<PlayerHealth>();
+            playerHealth.DeadReceived += OnDead;
+            playerHealth.RevivalReceived += OnRevival;
+            
             capsuleCollider = GetComponent<CapsuleCollider>();
             rb = GetComponent<Rigidbody>();
             cam = Camera.main;
         }
 
+        private void OnRevival(object sender, EventArgs e)
+        {
+            enabled = true;
+        }
+
+        private void OnDead(object sender, EventArgs e)
+        { 
+            enabled = false;
+        }
+        
         private void FixedUpdate()
         {
             // 若有位移，則在FixedUpdate中更新物體位置
