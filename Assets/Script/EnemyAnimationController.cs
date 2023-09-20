@@ -6,14 +6,14 @@ namespace BasicCode
     public class EnemyAnimationController : MonoBehaviour
     {
         private EnemyMovementController enemyMovementController;
-        private Animator animator;
-        private int velYHash;
-        private int jumpTriggerHash, isGroundedHash;
-        private int attackIndex = 0, attackMaxIndex = 2;
-        private int attackHash;
-        private EventHandler startAnimReceived, endAnimReceived;
-        private int hitTriggetHash, deadTriggerHash;
         private EnemyHealth enemyHealth;
+        private Animator animator;
+
+        private int velYHash;
+        private int attackHash;
+       
+        private int hitTriggetHash, deadTriggerHash;
+        private EventHandler startAnimReceived, endAnimReceived;
 
         public event EventHandler StartAnimReceived 
         {
@@ -28,56 +28,37 @@ namespace BasicCode
 
         void StartAttackAnimation()
         {
-            print("StartAttck");
             startAnimReceived?.Invoke(this, EventArgs.Empty);
         }
         void EndAttackAnimation()
         {
-            print("EndAttck");
             endAnimReceived?.Invoke(this, EventArgs.Empty);
         }
         
         // Start is called before the first frame update
         void Start()
         {
-            isGroundedHash = Animator.StringToHash("IsGrounded");
-            enemyMovementController = GetComponentInParent<EnemyMovementController>();
-            enemyMovementController.Fire1Received += OnFire;
-            attackHash = Animator.StringToHash("AttackTrigger");
-            animator = GetComponentInChildren<Animator>();
-            velYHash = Animator.StringToHash("VelY"); ;
-
             enemyHealth = GetComponentInParent<EnemyHealth>();
             enemyHealth.HitReceived += OnHit;
             enemyHealth.DeadReceived += OnDead;
 
+            enemyMovementController = GetComponentInParent<EnemyMovementController>();
+            enemyMovementController.FireReceived += OnFire;
+
+            animator = GetComponentInChildren<Animator>();
+            velYHash = Animator.StringToHash("VelY"); ;
+
+            attackHash = Animator.StringToHash("AttackTrigger");
+
             hitTriggetHash = Animator.StringToHash("HitTrigger");
             deadTriggerHash = Animator.StringToHash("DeadTrigger");
         }
-
+        // Update is called once per frame
+        void Update() { OnMove(); }
+        private void OnMove() { animator.SetFloat(velYHash, enemyMovementController.DeltaPos.magnitude); }
         private void OnHit(object sender, EventArgs e) { animator.SetTrigger(hitTriggetHash); }
         private void OnDead(object sender, EventArgs e) { animator.SetTrigger(deadTriggerHash); }
-        public void OnFire(object sender, FireEventArgs e)
-        {
-            animator.SetTrigger(attackHash);
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            OnMove();
-        }
-        void OnJump(object sender, EventArgs e)
-        { 
-            animator.SetTrigger(jumpTriggerHash);
-        }
-
-        private void OnMove()
-        {
-            animator.SetFloat(velYHash, enemyMovementController.DeltaPos.magnitude);
-        }
-        void StartAttackAnimation()
-        
+        void OnFire(object sender, FireEventArgs e) { animator.SetTrigger(attackHash); }
     }
 
 }

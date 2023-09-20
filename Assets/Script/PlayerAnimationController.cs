@@ -1,8 +1,4 @@
-﻿using BasicCode;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+﻿using System;
 using UnityEngine;
 
 namespace BasicCode
@@ -32,12 +28,10 @@ namespace BasicCode
 
         void StartAttackAnimation()
         {
-            print("StartAttck");
             startAnimReceived?.Invoke(this, EventArgs.Empty);
         }
         void EndAttackAnimation()
         {
-            print("EndAttck");
             endAnimReceived?.Invoke(this, EventArgs.Empty);
         }
         

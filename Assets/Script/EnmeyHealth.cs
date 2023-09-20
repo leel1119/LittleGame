@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BasicCode
@@ -84,7 +83,7 @@ namespace BasicCode
             if (ref_FX)
             {
                 GameObject temFx = Instantiate(ref_FX, transform.position, Quaternion.identity);
-                //temFx.AddComponent<ParticleEffectController>();
+                temFx.AddComponent<ParticleEffectController>();
             }
             else 
             {

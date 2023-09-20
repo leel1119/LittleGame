@@ -12,17 +12,6 @@ namespace BasicCode
 
         public float MoveSpeed => moveSpeed;
 
-        [SerializeField, Header("旋轉速度")]
-        private float deltaVertical, deltaHorizontal;
-        private Quaternion deltaRot;
-
-        public float groundCheckDistance = 0.1f;
-        private Rigidbody rb;
-        public ForceMode forceMode = ForceMode.Force;
-        CapsuleCollider capsuleCollider;
-
-        public Vector3 DeltaPos => deltaPos;
-
         [Header("攻擊參數")]
         [SerializeField] private float closeAttackDistance = 2.0f;
         [SerializeField] private Vector2 FireRandomInterval = new Vector2(1f, 2f);
@@ -30,16 +19,16 @@ namespace BasicCode
         [SerializeField] private float FireForce = 1.0f;
         private float fireCooldown = 0f;
 
-        private EventHandler<FireEventArgs> fireReceived;
+        private Vector3 deltaPos;
+        public Vector3 DeltaPos => deltaPos;
 
-        public event EventHandler<FireEventArgs> Fire1Received
+        private EventHandler<FireEventArgs> fireReceived;
+        public event EventHandler<FireEventArgs> FireReceived
         {
             add { fireReceived += value; }
             remove { fireReceived -= value; }
         }
-
         private Vector3 originPos;
-        private Vector3 deltaPos;
         private EnemyHealth enemyHealth;
         private NavMeshAgent agent;
         private GameObject target;
@@ -56,10 +45,6 @@ namespace BasicCode
             agent.stoppingDistance = closeAttackDistance;
 
             fireCooldown = UnityEngine.Random.Range(FireRandomInterval.x, FireRandomInterval.y);
-
-            capsuleCollider = GetComponent<CapsuleCollider>();
-            rb = GetComponent<Rigidbody>();
-            //cam = Camera.main;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -76,7 +61,7 @@ namespace BasicCode
             {
                 target = other.gameObject;
                 PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
-                if(enemyHealth.IsDead) target =null;
+                if(playerHealth.IsDead) target =null;
             }
         }
 
@@ -87,16 +72,6 @@ namespace BasicCode
                 target = null;
             }
         }
-
-        private void FixedUpdate()
-        {
-            // 若有位移，則在FixedUpdate中更新物體位置
-            if (deltaPos.magnitude != 0) rb.MovePosition(transform.position + deltaPos);
-            // 若有旋轉，則在FixedUpdate中更新物體旋轉
-            //if (deltaRot.eulerAngles.magnitude != 0) rb.MoveRotation(deltaRot);
-        }
-
-        // 每幀執行的方法
         void Update()
         {
             if (target)
@@ -127,13 +102,12 @@ namespace BasicCode
         }
 
         // 角色開火的方法
-        public void OnFire()
+        void OnFire()
         {
             float distance = Vector3.Distance(target.transform.position, transform.position);
             if (distance <= closeAttackDistance)
             { 
                 Quaternion targetRot = Quaternion.LookRotation(target.transform.position - agent.transform.position);
-                targetRot = targetRot.normalized;
                 targetRot = targetRot.normalized;
                 targetRot.x = targetRot.z = 0;
                 Quaternion deltaRot = Quaternion.Slerp(agent.transform.rotation, targetRot, agent.speed * Time.deltaTime);
@@ -150,16 +124,6 @@ namespace BasicCode
                     fireCooldown -= Time.deltaTime;
                 }
             }
-        }
-        public bool IsGrounded()
-        {
-            //RaycastHit hit;
-            // 若在地面上有碰撞，則返回true
-            if (Physics.Raycast(capsuleCollider.bounds.center, Vector3.down, capsuleCollider.bounds.extents.y + groundCheckDistance))
-            {
-                return true;
-            }
-            else { return false; }
         }
     }
 }

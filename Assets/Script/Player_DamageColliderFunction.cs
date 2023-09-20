@@ -1,7 +1,5 @@
 ﻿using BasicCode;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player_DamageColliderFunction : MonoBehaviour
@@ -13,23 +11,21 @@ public class Player_DamageColliderFunction : MonoBehaviour
     private FireEventArgs fireEventArgs;
     private Collider col;
     private GameObject owner;
-    // Start is called before the first frame update
     void Start()
     {
         col = GetComponent<Collider>();
         col.enabled = false;
 
         playerMovementController = GetComponentInParent<PlayerMovementController>();
-        playerMovementController.Fire1Received += OnFire1;
+        playerMovementController.Fire1Received += OnFire;
+        owner = playerMovementController.gameObject;
 
         playerAnimationController = GetComponentInParent<PlayerAnimationController>();
         playerAnimationController.StartAnimReceived += OnStartAttackAnimation;
         playerAnimationController.EndAnimReceived += OnEndAttatckAnimation;
-
-        owner = playerMovementController.gameObject;
     }
 
-    private void OnFire1(object sender, FireEventArgs e)
+    private void OnFire(object sender, FireEventArgs e)
     {
         fireEventArgs = e;
     }
@@ -50,20 +46,24 @@ public class Player_DamageColliderFunction : MonoBehaviour
             if (rb)
             { 
                 Vector3 contactPoint = other.ClosestPointOnBounds(transform.position);
-                //Vector3 direction = Vector3.Normalize(other.gameObject.transform.position - owner.transform.position);
-                Vector3 direction = Vector3.one;
+                Vector3 direction = Vector3.Normalize(other.gameObject.transform.position - owner.transform.position);
+                //Vector3 direction = Vector3.one;
                 rb.AddForce(direction * fireEventArgs.FireForce, ForceMode.Impulse);
                 GameObject tempFx = Instantiate(ref_FX, contactPoint, Quaternion.identity);
                 tempFx.AddComponent<ParticleEffectController>();
 
                 if (!other.CompareTag("Player"))
-                { 
-                
+                {
+                    float TotalDamage = fireEventArgs.FireDamage;
+                    EnemyHealth enemyHealth = other.GetComponent<EnemyHealth>();
+                    if (enemyHealth)
+                    {
+                        enemyHealth.OnDamage(TotalDamage);
+                    }
                 }
             }
         }
     }
-    // Update is called once per frame
     void Update()
     {
         
