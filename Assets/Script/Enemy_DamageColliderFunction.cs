@@ -32,6 +32,7 @@ public class Enemy_DamageColliderFunction : MonoBehaviour
     private void OnStartAttackAnimation(object sender, EventArgs e)
     {
         col.enabled = true;
+        print("ture");
     }
     private void OnEndAttatckAnimation(object sender, EventArgs e)
     {
