@@ -40,6 +40,12 @@ namespace BasicCode
             add { revivalReceived += value; }
             remove { revivalReceived -= value; }
         }
+        private EventHandler healingReceived;
+        public event EventHandler HealingReceived
+        {
+            add { healingReceived += value; }
+            remove { healingReceived -= value; }
+        }
 
         void Start()
         {
@@ -62,6 +68,7 @@ namespace BasicCode
 
         public void OnHealing(float heal)
         {
+            healingReceived?.Invoke(this, EventArgs.Empty);
             hp += heal;
             if(hp >= MaxHP) { hp = MaxHP; }
         }
