@@ -94,7 +94,7 @@ namespace BasicCode
         public void AddGems()
         {
             SettingGems(1);
-            AddScore(100);
+            AddScore(1);
         }
         //public void SubGems() { SettingGems(-1); }
 
@@ -108,9 +108,9 @@ namespace BasicCode
         }
         public void AddScore(int amount)
         {
-            score += gems * amount;
-            Text_Score.text = score.ToString();
+            score += 100 * amount;
 
+            Text_Score.text = score.ToString();
             Text_GameOver_Score.text = score.ToString();
         }
     }
